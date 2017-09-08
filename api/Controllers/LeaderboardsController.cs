@@ -46,6 +46,28 @@ namespace ScoreApi.Controllers
             return new JsonResult(leaderboard.Scores.ToList());
         }
 
+        [HttpGet("{leaderId}")]
+        public async Task<IActionResult> GetSingleScoreFromLeaderboard(long leaderId, [FromQuery]long id)
+        {
+            if (leaderId == 0)
+            {
+                return NotFound();
+            }
+
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var score = await _context.Scores.FirstOrDefaultAsync(s => s.LeaderboardId == leaderId && s.Id == id);
+            if (score == null)
+            {
+                return NotFound();
+            }
+
+            return new JsonResult(score);
+        }
+
         [HttpPost("{id}")]
         public async Task<IActionResult> Create(long id, [FromBody]ScoreInputModel scoreInput)
         {
@@ -84,9 +106,33 @@ namespace ScoreApi.Controllers
             return new NoContentResult();
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(long id)
+        [HttpDelete("{leaderId}")]
+        public async Task<IActionResult> Delete(long leaderId, [FromQuery]long id)
         {
+            if (leaderId == 0)
+            {
+                return NotFound();
+            }
+
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var score = await _context.Scores.SingleOrDefaultAsync(s => s.LeaderboardId == leaderId && s.Id == id);
+            if (score == null)
+            {
+                // Should we check leaderboard id separately for error message sake?
+                // Though we don't even have error messages here lul.
+                return NotFound();
+            }
+
+            // Does _context also have a Remove method and if so which should we use?
+            _context.Scores.Remove(score);
+            await _context.SaveChangesAsync();
+
+            // What should we return?
+            return new NoContentResult();
         }
     }
 }
