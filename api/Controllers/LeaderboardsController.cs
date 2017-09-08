@@ -45,13 +45,14 @@ namespace ScoreApi.Controllers
                 return NotFound();
             }
 
-            return new ObjectResult(leaderboard.Scores.ToList());
+            return new JsonResult(leaderboard.Scores.ToList());
         }
 
-        // POST api/values
+        // POST api/leaderboards/5
         [HttpPost("{id}")]
-        public async Task<IActionResult> Create(int id, [FromBody][Bind("Name,Value")] Score score)
+        public async Task<IActionResult> Create(int id, [FromBody]ScoreInputModel scoreInput)
         {
+            // Nullable so that we can differentiate between none passed and zero.
             if (id == 0)
             {
                 return NotFound();
@@ -63,22 +64,27 @@ namespace ScoreApi.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // TODO: More validation e.g. minimum length.
+            if (scoreInput.Name == null)
             {
-                score.LeaderboardId = id;
-
-                // TEMPORARY HACK WHILE WE ARE USING IN-MEMORY DATABASE
-                long maxId = await _context.Scores.Select(s => s.Id).MaxAsync();
-                score.Id = maxId + 1;
-
-                _context.Add(score);
-                await _context.SaveChangesAsync();
-                // Should return a RedirectToAction but only if we offer
-                // getting a single score, which I don't think we will.
-                return new NoContentResult();
+                return BadRequest();
             }
 
-            return BadRequest();
+            // TODO: More validation e.g. allowed ranges.
+            if (!scoreInput.Value.HasValue)
+            {
+                return BadRequest();
+            }
+
+            Score score = new Score { LeaderboardId = id, Name = scoreInput.Name, Value = scoreInput.Value.Value };
+            // TEMPORARY HACK WHILE WE ARE USING IN-MEMORY DATABASE
+            long maxId = await _context.Scores.Select(s => s.Id).MaxAsync();
+            score.Id = maxId + 1;
+
+            _context.Add(score);
+            await _context.SaveChangesAsync();
+
+            return new NoContentResult();
         }
 
         // DELETE api/values/5
