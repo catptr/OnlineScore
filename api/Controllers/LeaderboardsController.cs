@@ -19,14 +19,12 @@ namespace ScoreApi.Controllers
             _context = context;
         }
 
-        // GET api/leaderboards
         [HttpGet]
         public async Task<IEnumerable<Leaderboard>> GetLeaderboards()
         {
             return await _context.Leaderboards.ToListAsync();
         }
 
-        // GET api/leaderboards/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScoresFromLeaderboard(int id)
         {
@@ -48,7 +46,6 @@ namespace ScoreApi.Controllers
             return new JsonResult(leaderboard.Scores.ToList());
         }
 
-        // POST api/leaderboards/5
         [HttpPost("{id}")]
         public async Task<IActionResult> Create(int id, [FromBody]ScoreInputModel scoreInput)
         {
@@ -87,7 +84,6 @@ namespace ScoreApi.Controllers
             return new NoContentResult();
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
