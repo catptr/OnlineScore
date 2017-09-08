@@ -26,7 +26,7 @@ namespace ScoreApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetScoresFromLeaderboard(int id)
+        public async Task<IActionResult> GetScoresFromLeaderboard(long id)
         {
             if (id == 0)
             {
@@ -47,7 +47,7 @@ namespace ScoreApi.Controllers
         }
 
         [HttpPost("{id}")]
-        public async Task<IActionResult> Create(int id, [FromBody]ScoreInputModel scoreInput)
+        public async Task<IActionResult> Create(long id, [FromBody]ScoreInputModel scoreInput)
         {
             // Nullable so that we can differentiate between none passed and zero.
             if (id == 0)
@@ -85,7 +85,7 @@ namespace ScoreApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(long id)
         {
         }
     }
