@@ -2,7 +2,6 @@
    A method to return 403 isn't provided by ControllerBase so eh...
  * Should scores be created by pushing to scores or leaderboards/{id} or both?
    Same with delete.
- * Decide how we should reach single scores (new endpoint or querystring).
  * Check what the AsNoTracking method does and if we need it.
  * Look up if we'll need to handle concurrency shit in database, probably not since we only add and remove.
  * Decide what datatype our value will be. Bytearray?
