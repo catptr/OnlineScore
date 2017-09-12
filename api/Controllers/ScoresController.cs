@@ -19,7 +19,7 @@ namespace ScoreApi.Controllers
             _context = context;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetScore")]
         public async Task<IActionResult> GetScore(long id)
         {
             if (id == 0)

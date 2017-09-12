@@ -71,7 +71,6 @@ namespace ScoreApi.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> Create(long id, [FromBody]ScoreInputModel scoreInput)
         {
-            // Nullable so that we can differentiate between none passed and zero.
             if (id == 0)
             {
                 return NotFound();
@@ -103,7 +102,7 @@ namespace ScoreApi.Controllers
             _context.Add(score);
             await _context.SaveChangesAsync();
 
-            return new NoContentResult();
+            return CreatedAtRoute("GetScore", new { id = score.Id }, score);
         }
 
         [HttpDelete("{leaderId}")]
