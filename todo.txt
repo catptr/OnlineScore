@@ -6,3 +6,4 @@
  * Check what the AsNoTracking method does and if we need it.
  * Look up if we'll need to handle concurrency shit in database, probably not since we only add and remove.
  * Decide what datatype our value will be. Bytearray?
+ * Look into DbContext methods vs DbSet and see which we should use.

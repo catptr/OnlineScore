@@ -37,5 +37,28 @@ namespace ScoreApi.Controllers
 
             return new JsonResult(score);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteScore(long id)
+        {
+            // Is this necessary?
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            // TODO: See if the user has access to this score's leaderboard.
+            var score = await _context.Scores.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (score == null)
+            {
+                return NotFound();
+            }
+
+            _context.Scores.Remove(score);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
