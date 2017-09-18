@@ -25,7 +25,7 @@ namespace ScoreApi.Controllers
             return await _context.Leaderboards.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetLeaderboard")]
         public async Task<IActionResult> GetScoresFromLeaderboard(long id)
         {
             if (id == 0)
@@ -69,8 +69,13 @@ namespace ScoreApi.Controllers
         }
 
         [HttpPost("{id}")]
-        public async Task<IActionResult> Create(long id, [FromBody]ScoreInputModel scoreInput)
+        public async Task<IActionResult> CreateScore(long id, [FromBody]ScoreInputModel scoreInput)
         {
+            if (scoreInput == null)
+            {
+                return BadRequest();
+            }
+
             if (id == 0)
             {
                 return NotFound();
@@ -105,33 +110,25 @@ namespace ScoreApi.Controllers
             return CreatedAtRoute("GetScore", new { id = score.Id }, score);
         }
 
-        [HttpDelete("{leaderId}")]
-        public async Task<IActionResult> Delete(long leaderId, [FromQuery]long id)
+        [HttpPost]
+        public async Task<IActionResult> CreateLeaderboard([FromBody]Leaderboard leaderboardInput)
         {
-            if (leaderId == 0)
+            if (leaderboardInput == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (id == 0)
-            {
-                return NotFound();
-            }
+            Leaderboard leaderboard = new Leaderboard();
+            leaderboard.Owner = leaderboardInput.Owner;
 
-            var score = await _context.Scores.SingleOrDefaultAsync(s => s.LeaderboardId == leaderId && s.Id == id);
-            if (score == null)
-            {
-                // Should we check leaderboard id separately for error message sake?
-                // Though we don't even have error messages here lul.
-                return NotFound();
-            }
+            // TEMPORARY HACK WHILE WE ARE USING IN-MEMORY DATABASE
+            long maxId = await _context.Leaderboards.Select(l => l.Id).MaxAsync();
+            leaderboard.Id = maxId + 1;
 
-            // Does _context also have a Remove method and if so which should we use?
-            _context.Scores.Remove(score);
+            _context.Add(leaderboard);
             await _context.SaveChangesAsync();
 
-            // What should we return?
-            return new NoContentResult();
+            return CreatedAtRoute("GetLeaderboard", new {id = leaderboard.Id }, leaderboard);
         }
     }
 }
