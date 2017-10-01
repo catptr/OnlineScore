@@ -31,6 +31,7 @@ namespace ScoreApi
         {
             // Add framework services.
             services.AddMvc();
+                //.AddAuthorization();
             services.AddDbContext<ScoreContext>(opt => opt.UseInMemoryDatabase());
         }
 
@@ -39,6 +40,14 @@ namespace ScoreApi
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+            {
+                Authority = "http://localhost:5000",
+                RequireHttpsMetadata = false,
+
+                ApiName = "score_api_v1"
+            });
 
             app.UseMvc();
 

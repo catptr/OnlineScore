@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using ScoreApi.Data;
 using ScoreApi.Models;
@@ -10,6 +11,7 @@ using ScoreApi.Models;
 namespace ScoreApi.Controllers
 {
     [Route("api/v1/[controller]")]
+    [Authorize]
     public class LeaderboardsController : Controller
     {
         private readonly ScoreContext _context;
